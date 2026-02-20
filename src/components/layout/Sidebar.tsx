@@ -10,6 +10,7 @@ import {
     Settings,
     ChevronRight,
     Boxes,
+    LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +57,20 @@ export default function Sidebar() {
                     );
                 })}
             </nav>
+
+            {/* Logout Button */}
+            <div className="px-3 pb-4">
+                <button
+                    onClick={async () => {
+                        await fetch("/api/auth/logout", { method: "POST" });
+                        window.location.href = "/auth/login";
+                    }}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 transition-colors w-full text-left"
+                >
+                    <LogOut className="w-[18px] h-[18px]" />
+                    <span>Logout</span>
+                </button>
+            </div>
 
             {/* User profile at bottom */}
             <div className="px-4 py-4 border-t border-border">
