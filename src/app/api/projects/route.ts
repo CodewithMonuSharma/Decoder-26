@@ -67,16 +67,30 @@ export async function POST(req: Request) {
         if (USE_MONGO) {
             const { connectDB, ProjectModel } = await getMongoHandler();
             await connectDB();
+            // Ensure creator is an Admin member
+            const creatorMember = {
+                userId: user.id || user._id,
+                name: user.name,
+                email: user.email,
+                role: "Admin",
+                initials: user.name.split(' ').map((n: any) => n[0]).join('').toUpperCase(),
+                joinedDate: new Date().toISOString(),
+                status: "active"
+            };
+
+            const members = [creatorMember, ...(body.members || [])];
+
             const project = await ProjectModel.create({
                 name: body.name,
                 description: body.description,
                 techStack: body.techStack || [],
                 status: body.status || "active",
-                teamSize: body.teamSize || 1,
+                teamSize: body.teamSize || members.length,
                 progress: 0,
                 category: body.category || "Web",
                 ownerId: user.id || user._id,
-                members: body.members || [],
+                leaderId: body.leaderId || null,
+                members: members,
             });
             return NextResponse.json({ ...project.toObject(), id: project._id.toString(), tasks: [] }, { status: 201 });
         }
