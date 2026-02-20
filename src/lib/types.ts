@@ -1,7 +1,8 @@
 // TypeScript interfaces for the application
 
 export interface Member {
-    id: string;
+    id?: string;
+    userId?: string;
     name: string;
     email: string;
     role: "Lead" | "Developer" | "Designer" | "Tester" | "Manager";

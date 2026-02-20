@@ -44,9 +44,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
                 {/* Tech Stack */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                    {project.techStack.slice(0, 4).map((tech) => (
+                    {project.techStack.slice(0, 4).map((tech, idx) => (
                         <span
-                            key={tech}
+                            key={`${tech}-${idx}`}
                             className="px-2 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-600 rounded-md"
                         >
                             {tech}
@@ -80,9 +80,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                     </div>
                     {/* Member avatars */}
                     <div className="flex -space-x-1.5">
-                        {project.members.slice(0, 4).map((member) => (
+                        {project.members.slice(0, 4).map((member, idx) => (
                             <div
-                                key={member.id}
+                                key={member.userId || member.id || idx}
                                 className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center"
                                 title={member.name}
                             >
