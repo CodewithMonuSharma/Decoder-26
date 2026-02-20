@@ -14,9 +14,9 @@ import { Project as IProject, Task as ITask } from "@/types";
 // GET /api/projects/:id
 export async function GET(
     _req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    context: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
+    const { id } = await context.params;
     let mongoError = null;
     try {
         if (USE_MONGO) {
@@ -56,9 +56,9 @@ export async function GET(
 // PATCH /api/projects/:id
 export async function PATCH(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    context: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
+    const { id } = await context.params;
     const body = await req.json();
     let mongoError = null;
     try {
@@ -91,9 +91,9 @@ export async function PATCH(
 // DELETE /api/projects/:id
 export async function DELETE(
     _req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    context: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
+    const { id } = await context.params;
     let mongoError = null;
     try {
         if (USE_MONGO) {
