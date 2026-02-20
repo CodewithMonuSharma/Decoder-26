@@ -7,6 +7,7 @@ import {
     FolderKanban,
     CheckSquare,
     Users,
+    BarChart2,
     Settings,
     ChevronRight,
     Boxes,
@@ -19,6 +20,7 @@ const navItems = [
     { label: "Projects", href: "/projects", icon: FolderKanban },
     { label: "Tasks", href: "/tasks", icon: CheckSquare },
     { label: "Team", href: "/team", icon: Users },
+    { label: "Analytics", href: "/analytics", icon: BarChart2 },
     { label: "Settings", href: "/settings", icon: Settings },
 ];
 
