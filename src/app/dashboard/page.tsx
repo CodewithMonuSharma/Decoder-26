@@ -8,6 +8,8 @@ import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardStatsSection } from "@/components/dashboard/DashboardStatsSection";
 import { ProjectList } from "@/components/dashboard/ProjectList";
+import MentorStudentList from "@/components/dashboard/MentorStudentList";
+import MentorProjectRequests from "@/components/dashboard/MentorProjectRequests";
 
 export default async function DashboardPage() {
     const session = await getSession();
@@ -30,13 +32,22 @@ export default async function DashboardPage() {
 
             {/* Main content grid */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                {/* Projects */}
-                <div className="xl:col-span-2">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-semibold text-gray-900">Your Projects</h3>
-                        <Link href="/projects" className="text-xs text-primary hover:underline font-medium">View all</Link>
+                {/* Projects or Mentor tracking */}
+                <div className="xl:col-span-2 space-y-8">
+                    {user.role === "mentor" && (
+                        <>
+                            <MentorProjectRequests />
+                            <MentorStudentList />
+                        </>
+                    )}
+
+                    <div>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-sm font-semibold text-gray-900">Your Projects</h3>
+                            <Link href="/projects" className="text-xs text-primary hover:underline font-medium">View all</Link>
+                        </div>
+                        <ProjectList />
                     </div>
-                    <ProjectList />
                 </div>
 
                 {/* Activity Feed */}

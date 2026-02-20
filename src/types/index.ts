@@ -62,6 +62,8 @@ export interface Project {
     ownerId?: string;
     leaderId?: string;
     category: string;
+    invitedMentorId?: string | null;
+    mentorStatus?: "none" | "pending" | "accepted" | "rejected";
 }
 
 export interface Contribution {

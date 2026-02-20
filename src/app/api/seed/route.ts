@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongoose";
 import { ProjectModel } from "@/models/Project";
 import { TaskModel } from "@/models/Task";
+import { UserModel } from "@/models/User";
+import bcrypt from "bcryptjs";
 
 // GET /api/seed — one-time demo data seeder
 export async function GET() {
@@ -14,20 +16,78 @@ export async function GET() {
             return NextResponse.json({ ok: true, message: "Already seeded", count: existing });
         }
 
+        // ── Create Users (Mentors, Students, Admin) ──────────────────────────────
+        const salt = await bcrypt.genSalt(10);
+        const hashedManagerPassword = await bcrypt.hash("manager123", salt);
+        const hashedUserPassword = await bcrypt.hash("user123", salt);
+        const hashedAdminPassword = await bcrypt.hash("admin123", salt);
+
+        // Mentors
+        const mentor = await UserModel.create({
+            name: "Dr. Jane Smith",
+            email: "mentor@example.com",
+            password: hashedManagerPassword,
+            role: "mentor",
+        });
+
+        // Students linked to Mentor
+        const student1 = await UserModel.create({
+            name: "Alice Johnson",
+            email: "alice@example.com",
+            password: hashedUserPassword,
+            role: "student",
+            mentorId: mentor._id.toString(),
+        });
+
+        const student2 = await UserModel.create({
+            name: "Bob Wilson",
+            email: "bob@example.com",
+            password: hashedUserPassword,
+            role: "student",
+            mentorId: mentor._id.toString(),
+        });
+
+        const admin = await UserModel.create({
+            name: "Admin User",
+            email: "admin@example.com",
+            password: hashedAdminPassword,
+            role: "admin",
+        });
+
         // ── Create Projects ──────────────────────────────
         const p1 = await ProjectModel.create({
             name: "AI Research Portal",
-            description: "A machine learning platform for collaborative research with real-time data analysis and visualization.",
-            techStack: ["Python", "TensorFlow", "Next.js", "FastAPI"],
+            description: "A comprehensive platform for managing AI research papers and datasets with real-time collaboration features.",
+            techStack: ["Next.js", "Python", "PyTorch", "MongoDB"],
             status: "active",
-            teamSize: 4,
+            teamSize: 5,
             progress: 65,
             category: "AI / ML",
+            ownerId: admin._id,
+            leaderId: student1._id,
+            invitedMentorId: mentor._id.toString(),
+            mentorStatus: "pending",
             members: [
-                { name: "Arjun Sharma", email: "arjun@demo.com", role: "Lead", initials: "AS", tasksAssigned: 3, joinedDate: "Jan 10", status: "active" },
-                { name: "Priya Patel", email: "priya@demo.com", role: "Developer", initials: "PP", tasksAssigned: 2, joinedDate: "Jan 12", status: "active" },
-                { name: "Rohan Verma", email: "rohan@demo.com", role: "Designer", initials: "RV", tasksAssigned: 1, joinedDate: "Jan 15", status: "away" },
-                { name: "Sneha Gupta", email: "sneha@demo.com", role: "Tester", initials: "SG", tasksAssigned: 2, joinedDate: "Jan 18", status: "active" },
+                {
+                    userId: student1._id,
+                    name: student1.name,
+                    email: student1.email,
+                    role: "Lead",
+                    initials: "AJ",
+                    tasksAssigned: 3,
+                    joinedDate: "2024-01-15",
+                    status: "active",
+                },
+                {
+                    userId: student2._id,
+                    name: student2.name,
+                    email: student2.email,
+                    role: "Developer",
+                    initials: "BW",
+                    tasksAssigned: 2,
+                    joinedDate: "2024-01-20",
+                    status: "active",
+                },
             ],
         });
 

@@ -90,6 +90,8 @@ export async function POST(req: Request) {
                 category: body.category || "Web",
                 ownerId: user.id || user._id,
                 leaderId: body.leaderId || null,
+                invitedMentorId: body.invitedMentorId || null,
+                mentorStatus: body.invitedMentorId ? "pending" : "none",
                 members: members,
             });
             return NextResponse.json({ ...project.toObject(), id: project._id.toString(), tasks: [] }, { status: 201 });

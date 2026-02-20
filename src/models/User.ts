@@ -10,6 +10,7 @@ const UserSchema = new Schema(
             enum: ["student", "mentor", "admin"],
             default: "student",
         },
+        mentorId: { type: String },
     },
     { timestamps: true }
 );

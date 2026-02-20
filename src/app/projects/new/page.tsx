@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X, Plus, Search, User, Crown, Check } from "lucide-react";
+import { X, Plus, Search, User, Crown, Check, GraduationCap } from "lucide-react";
 
 const schema = z.object({
     name: z.string().min(3, "Project name must be at least 3 characters"),
@@ -36,6 +36,12 @@ export default function NewProjectPage() {
     const [leaderId, setLeaderId] = useState<string | null>(null);
     const [searching, setSearching] = useState(false);
 
+    // Mentor Invitation State
+    const [mentorSearchQuery, setMentorSearchQuery] = useState("");
+    const [mentorSearchResults, setMentorSearchResults] = useState<any[]>([]);
+    const [selectedMentor, setSelectedMentor] = useState<any | null>(null);
+    const [mentorSearching, setMentorSearching] = useState(false);
+
     const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm<FormData>({
         resolver: zodResolver(schema),
     });
@@ -52,7 +58,7 @@ export default function NewProjectPage() {
                 try {
                     const res = await fetch(`/api/users/search?q=${searchQuery}`);
                     const data = await res.json();
-                    setSearchResults(data);
+                    setSearchResults(data.filter((u: any) => u.role === "student"));
                 } catch (e) {
                     console.error("Search failed:", e);
                 } finally {
@@ -65,6 +71,28 @@ export default function NewProjectPage() {
 
         return () => clearTimeout(delayDebounce);
     }, [searchQuery]);
+
+    // Mentor Search Effect
+    useEffect(() => {
+        const delayDebounce = setTimeout(async () => {
+            if (mentorSearchQuery.length >= 2) {
+                setMentorSearching(true);
+                try {
+                    const res = await fetch(`/api/users/search?q=${mentorSearchQuery}`);
+                    const data = await res.json();
+                    setMentorSearchResults(data.filter((u: any) => u.role === "mentor"));
+                } catch (e) {
+                    console.error("Mentor search failed:", e);
+                } finally {
+                    setMentorSearching(false);
+                }
+            } else {
+                setMentorSearchResults([]);
+            }
+        }, 300);
+
+        return () => clearTimeout(delayDebounce);
+    }, [mentorSearchQuery]);
 
     const addTech = () => {
         if (techInput.trim() && !techStack.includes(techInput.trim())) {
@@ -111,6 +139,7 @@ export default function NewProjectPage() {
                         role: leaderId === m._id ? "Lead" : "Developer"
                     })),
                     leaderId: leaderId,
+                    invitedMentorId: selectedMentor?._id || null,
                 }),
             });
             if (res.ok) {
@@ -317,6 +346,82 @@ export default function NewProjectPage() {
                                 )}
                             </div>
 
+                            {/* Mentor Guidance Section */}
+                            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-6">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                        <GraduationCap className="w-5 h-5" />
+                                    </div>
+                                    <h3 className="font-bold text-gray-800">Mentor Guidance</h3>
+                                </div>
+
+                                <div className="relative">
+                                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <Input
+                                        placeholder="Find a mentor to guide your project..."
+                                        value={mentorSearchQuery}
+                                        onChange={(e) => setMentorSearchQuery(e.target.value)}
+                                        className="pl-10 h-11 rounded-xl border-gray-100 bg-gray-50 shadow-none focus:bg-white transition-all"
+                                    />
+
+                                    {mentorSearching && <div className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />}
+
+                                    {mentorSearchResults.length > 0 && (
+                                        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+                                            {mentorSearchResults.map((m) => (
+                                                <button
+                                                    key={m._id}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSelectedMentor(m);
+                                                        setMentorSearchQuery("");
+                                                        setMentorSearchResults([]);
+                                                    }}
+                                                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-xs uppercase">
+                                                            {m.name[0]}
+                                                        </div>
+                                                        <div className="text-left">
+                                                            <p className="text-sm font-bold text-gray-900">{m.name}</p>
+                                                            <p className="text-[10px] text-gray-500">{m.email}</p>
+                                                        </div>
+                                                    </div>
+                                                    <Plus className="w-4 h-4 text-gray-400" />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {selectedMentor && (
+                                    <div className="flex items-center justify-between p-4 bg-emerald-50 border border-emerald-100 rounded-xl animate-in zoom-in-95 duration-200">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-emerald-200">
+                                                {selectedMentor.name[0]}
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-emerald-900 text-sm">{selectedMentor.name}</h4>
+                                                <p className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
+                                                    <Check className="w-3 h-3" /> Mentor Selected
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-emerald-400 hover:text-emerald-600 hover:bg-emerald-100"
+                                            onClick={() => setSelectedMentor(null)}
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                )}
+                                <p className="text-[10px] text-gray-400 italic">The mentor will receive a request to join after you deploy the project.</p>
+                            </div>
+
                             {/* Final Actions */}
                             <div className="flex items-center gap-4 pt-4">
                                 <Button
@@ -366,6 +471,25 @@ export default function NewProjectPage() {
                                         </div>
                                     ) : (
                                         <p className="text-xs text-gray-400 italic">No leader appointed yet.</p>
+                                    )}
+                                </div>
+
+                                <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Project Mentor</p>
+                                    {selectedMentor ? (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
+                                                <GraduationCap className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-gray-900 truncate max-w-[150px]">
+                                                    {selectedMentor.name}
+                                                </p>
+                                                <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Status: Requesting</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="text-xs text-gray-400 italic">No mentor invited yet.</p>
                                     )}
                                 </div>
                             </div>

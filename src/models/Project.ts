@@ -16,6 +16,12 @@ const ProjectSchema = new Schema<IProject>(
         category: { type: String, default: "Web" },
         ownerId: { type: String, required: true },
         leaderId: { type: String },
+        invitedMentorId: { type: String },
+        mentorStatus: {
+            type: String,
+            enum: ["none", "pending", "accepted", "rejected"],
+            default: "none"
+        },
         members: [
             {
                 userId: { type: String },
