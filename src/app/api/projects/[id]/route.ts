@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const USE_MONGO = !!process.env.MONGODB_URI;
 
@@ -13,7 +13,7 @@ import { Project as IProject, Task as ITask } from "@/types";
 
 // GET /api/projects/:id
 export async function GET(
-    _req: Request,
+    _req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
@@ -55,7 +55,7 @@ export async function GET(
 
 // PATCH /api/projects/:id
 export async function PATCH(
-    req: Request,
+    req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
@@ -67,7 +67,7 @@ export async function PATCH(
             await connectDB();
             const updated = await ProjectModel.findByIdAndUpdate(id, body, { new: true }).lean();
             if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
-            const updatedData = updated as unknown as Record<string, unknown>;
+            const updatedData = updated as any;
             return NextResponse.json({ ...updatedData, id: updatedData._id.toString() });
         }
     } catch (err) {
@@ -90,7 +90,7 @@ export async function PATCH(
 
 // DELETE /api/projects/:id
 export async function DELETE(
-    _req: Request,
+    _req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const USE_MONGO = !!process.env.MONGODB_URI;
 
@@ -10,7 +10,7 @@ async function getMongoHandler() {
 
 // GET /api/projects/:id/tasks
 export async function GET(
-    _req: Request,
+    _req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
@@ -45,7 +45,7 @@ export async function GET(
 }
 
 export async function POST(
-    req: Request,
+    req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
