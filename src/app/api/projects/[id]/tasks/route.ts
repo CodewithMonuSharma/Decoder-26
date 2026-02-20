@@ -11,9 +11,9 @@ async function getMongoHandler() {
 // GET /api/projects/:id/tasks
 export async function GET(
     _req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    context: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
+    const { id } = await context.params;
     let mongoError = null;
     try {
         if (USE_MONGO) {
@@ -46,9 +46,9 @@ export async function GET(
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    context: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
+    const { id } = await context.params;
     const { getSession } = await import("@/lib/auth");
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
