@@ -5,47 +5,39 @@ import { TaskModel } from "@/models/Task";
 import { UserModel } from "@/models/User";
 import bcrypt from "bcryptjs";
 
-// GET /api/seed — one-time demo data seeder
 export async function GET() {
     try {
         await connectDB();
 
-        // Don't reseed if data exists
-        const existing = await ProjectModel.countDocuments();
-        if (existing > 0) {
-            return NextResponse.json({ ok: true, message: "Already seeded", count: existing });
-        }
+        // Clear existing demo data to ensure a fresh state
+        await ProjectModel.deleteMany({});
+        await TaskModel.deleteMany({});
+        await UserModel.deleteMany({});
 
-        // ── Create Users (Mentors, Students, Admin) ──────────────────────────────
+        // ── Create Users ──────────────────────────────
         const salt = await bcrypt.genSalt(10);
-        const hashedManagerPassword = await bcrypt.hash("manager123", salt);
         const hashedUserPassword = await bcrypt.hash("user123", salt);
+        const hashedMentorPassword = await bcrypt.hash("mentor123", salt);
         const hashedAdminPassword = await bcrypt.hash("admin123", salt);
 
-        // Mentors
+        // Mentor
         const mentor = await UserModel.create({
             name: "Dr. Jane Smith",
             email: "mentor@example.com",
-            password: hashedManagerPassword,
+            password: hashedMentorPassword,
             role: "mentor",
         });
 
         // Students linked to Mentor
-        const student1 = await UserModel.create({
-            name: "Alice Johnson",
-            email: "alice@example.com",
-            password: hashedUserPassword,
-            role: "student",
-            mentorId: mentor._id.toString(),
-        });
+        const students = await Promise.all([
+            UserModel.create({ name: "Alice Johnson", email: "alice@example.com", password: hashedUserPassword, role: "student", mentorId: mentor._id.toString() }),
+            UserModel.create({ name: "Bob Wilson", email: "bob@example.com", password: hashedUserPassword, role: "student", mentorId: mentor._id.toString() }),
+            UserModel.create({ name: "Charlie Davis", email: "charlie@example.com", password: hashedUserPassword, role: "student", mentorId: mentor._id.toString() }),
+            UserModel.create({ name: "Diana Prince", email: "diana@example.com", password: hashedUserPassword, role: "student", mentorId: mentor._id.toString() }),
+            UserModel.create({ name: "Ethan Hunt", email: "ethan@example.com", password: hashedUserPassword, role: "student", mentorId: mentor._id.toString() }),
+        ]);
 
-        const student2 = await UserModel.create({
-            name: "Bob Wilson",
-            email: "bob@example.com",
-            password: hashedUserPassword,
-            role: "student",
-            mentorId: mentor._id.toString(),
-        });
+        const [s1, s2, s3, s4, s5] = students;
 
         const admin = await UserModel.create({
             name: "Admin User",
@@ -64,30 +56,13 @@ export async function GET() {
             progress: 65,
             category: "AI / ML",
             ownerId: admin._id,
-            leaderId: student1._id,
+            leaderId: s1._id,
             invitedMentorId: mentor._id.toString(),
-            mentorStatus: "pending",
+            mentorStatus: "accepted",
             members: [
-                {
-                    userId: student1._id,
-                    name: student1.name,
-                    email: student1.email,
-                    role: "Lead",
-                    initials: "AJ",
-                    tasksAssigned: 3,
-                    joinedDate: "2024-01-15",
-                    status: "active",
-                },
-                {
-                    userId: student2._id,
-                    name: student2.name,
-                    email: student2.email,
-                    role: "Developer",
-                    initials: "BW",
-                    tasksAssigned: 2,
-                    joinedDate: "2024-01-20",
-                    status: "active",
-                },
+                { userId: s1._id, name: s1.name, email: s1.email, role: "Lead", initials: "AJ", tasksAssigned: 3, joinedDate: "2024-01-15", status: "active" },
+                { userId: s2._id, name: s2.name, email: s2.email, role: "Developer", initials: "BW", tasksAssigned: 2, joinedDate: "2024-01-20", status: "active" },
+                { userId: s3._id, name: s3.name, email: s3.email, role: "Designer", initials: "CD", tasksAssigned: 2, joinedDate: "2024-01-22", status: "active" },
             ],
         });
 
@@ -99,54 +74,87 @@ export async function GET() {
             teamSize: 3,
             progress: 42,
             category: "Mobile",
+            ownerId: s2._id,
+            leaderId: s2._id,
             members: [
-                { name: "Karan Singh", email: "karan@demo.com", role: "Lead", initials: "KS", tasksAssigned: 3, joinedDate: "Dec 5", status: "active" },
-                { name: "Priya Patel", email: "priya@demo.com", role: "Developer", initials: "PP", tasksAssigned: 4, joinedDate: "Dec 8", status: "active" },
-                { name: "Rohan Verma", email: "rohan@demo.com", role: "Designer", initials: "RV", tasksAssigned: 2, joinedDate: "Dec 10", status: "active" },
+                { userId: s2._id, name: s2.name, email: s2.email, role: "Lead", initials: "BW", tasksAssigned: 4, joinedDate: "2024-01-10", status: "active" },
+                { userId: s4._id, name: s4.name, email: s4.email, role: "Developer", initials: "DP", tasksAssigned: 3, joinedDate: "2024-01-12", status: "active" },
+                { userId: s5._id, name: s5.name, email: s5.email, role: "Developer", initials: "EH", tasksAssigned: 2, joinedDate: "2024-01-15", status: "active" },
             ],
         });
 
         const p3 = await ProjectModel.create({
-            name: "Campus Event Hub",
-            description: "Centralized platform for discovering, organizing, and managing university events and student activities.",
-            techStack: ["Next.js", "PostgreSQL", "Tailwind CSS", "Prisma"],
-            status: "active",
-            teamSize: 5,
-            progress: 80,
-            category: "Web",
+            name: "Smart Agriculture System",
+            description: "IoT-based system for monitoring soil health, moisture levels, and automated irrigation management.",
+            techStack: ["React", "C++", "MQTT", "InfluxDB"],
+            status: "planning",
+            teamSize: 4,
+            progress: 15,
+            category: "IoT",
+            ownerId: s3._id,
+            leaderId: s3._id,
+            invitedMentorId: mentor._id.toString(),
+            mentorStatus: "pending",
             members: [
-                { name: "Arjun Sharma", email: "arjun@demo.com", role: "Developer", initials: "AS", tasksAssigned: 2, joinedDate: "Nov 20", status: "active" },
-                { name: "Sneha Gupta", email: "sneha@demo.com", role: "Lead", initials: "SG", tasksAssigned: 3, joinedDate: "Nov 20", status: "active" },
-                { name: "Karan Singh", email: "karan@demo.com", role: "Designer", initials: "KS", tasksAssigned: 1, joinedDate: "Nov 22", status: "away" },
+                { userId: s3._id, name: s3.name, email: s3.email, role: "Lead", initials: "CD", tasksAssigned: 2, joinedDate: "2024-02-01", status: "active" },
+                { userId: s1._id, name: s1.name, email: s1.email, role: "Developer", initials: "AJ", tasksAssigned: 1, joinedDate: "2024-02-05", status: "active" },
+            ],
+        });
+
+        const p4 = await ProjectModel.create({
+            name: "Cyber Security Shield",
+            description: "Network traffic analysis and threat detection dashboard using real-time packet inspection and heuristics.",
+            techStack: ["Go", "React", "Docker", "Elasticsearch"],
+            status: "active",
+            teamSize: 6,
+            progress: 82,
+            category: "DevOps",
+            ownerId: admin._id,
+            leaderId: s4._id,
+            members: [
+                { userId: s4._id, name: s4.name, email: s4.email, role: "Lead", initials: "DP", tasksAssigned: 5, joinedDate: "2024-01-05", status: "active" },
+                { userId: s5._id, name: s5.name, email: s5.email, role: "Developer", initials: "EH", tasksAssigned: 4, joinedDate: "2024-01-05", status: "active" },
+                { userId: s1._id, name: s1.name, email: s1.email, role: "Developer", initials: "AJ", tasksAssigned: 3, joinedDate: "2024-01-10", status: "active" },
             ],
         });
 
         // ── Create Tasks ─────────────────────────────────
-        const p1Tasks = [
-            { title: "Set up ML pipeline", status: "done", priority: "high", assigneeName: "Arjun Sharma", assigneeInitials: "AS" },
-            { title: "Build data visualization dashboard", status: "in-progress", priority: "high", assigneeName: "Priya Patel", assigneeInitials: "PP" },
-            { title: "Integrate TensorFlow model", status: "in-progress", priority: "medium", assigneeName: "Arjun Sharma", assigneeInitials: "AS" },
-            { title: "UI for model results", status: "todo", priority: "medium", assigneeName: "Rohan Verma", assigneeInitials: "RV" },
-            { title: "Write API documentation", status: "todo", priority: "low", assigneeName: "Sneha Gupta", assigneeInitials: "SG" },
-        ];
-        const p2Tasks = [
-            { title: "Design onboarding screen", status: "done", priority: "high", assigneeName: "Rohan Verma", assigneeInitials: "RV" },
-            { title: "Carbon calculator logic", status: "in-progress", priority: "high", assigneeName: "Karan Singh", assigneeInitials: "KS" },
-            { title: "Push notification setup", status: "todo", priority: "medium", assigneeName: "Priya Patel", assigneeInitials: "PP" },
-            { title: "Firebase auth integration", status: "done", priority: "high", assigneeName: "Priya Patel", assigneeInitials: "PP" },
-        ];
-        const p3Tasks = [
-            { title: "Event creation form", status: "done", priority: "high", assigneeName: "Sneha Gupta", assigneeInitials: "SG" },
-            { title: "RSVP feature", status: "done", priority: "medium", assigneeName: "Arjun Sharma", assigneeInitials: "AS" },
-            { title: "Email notification system", status: "in-progress", priority: "high", assigneeName: "Sneha Gupta", assigneeInitials: "SG" },
-            { title: "Calendar view", status: "todo", priority: "medium", assigneeName: "Karan Singh", assigneeInitials: "KS" },
+        const tasks = [
+            // P1: AI Research Portal
+            { title: "Develop API for paper uploading", status: "done", priority: "high", assignedTo: s1._id, projectId: p1._id },
+            { title: "Configure MongoDB collections", status: "done", priority: "high", assignedTo: s1._id, projectId: p1._id },
+            { title: "Implement real-time collaboration with Socket.io", status: "in-progress", priority: "high", assignedTo: s2._id, projectId: p1._id },
+            { title: "Design PDF viewer component", status: "in-progress", priority: "medium", assignedTo: s3._id, projectId: p1._id },
+            { title: "Write initial unit tests", status: "todo", priority: "low", assignedTo: s1._id, projectId: p1._id },
+
+            // P2: EcoTrack Mobile App
+            { title: "Design app icon and splashes", status: "done", priority: "medium", assignedTo: s5._id, projectId: p2._id },
+            { title: "Integrate Firebase Authentication", status: "done", priority: "high", assignedTo: s2._id, projectId: p2._id },
+            { title: "Build carbon calculator logic", status: "in-progress", priority: "high", assignedTo: s2._id, projectId: p2._id },
+            { title: "Map integration for green spots", status: "todo", priority: "medium", assignedTo: s4._id, projectId: p2._id },
+
+            // P3: Smart Agriculture
+            { title: "Research sensor hardware", status: "done", priority: "high", assignedTo: s3._id, projectId: p3._id },
+            { title: "Draft system architecture", status: "in-progress", priority: "medium", assignedTo: s3._id, projectId: p3._id },
+            { title: "Setup MQTT broker", status: "todo", priority: "high", assignedTo: s1._id, projectId: p3._id },
+
+            // P4: Cyber Security Shield
+            { title: "Setup Dockerized Go backend", status: "done", priority: "high", assignedTo: s4._id, projectId: p4._id },
+            { title: "Implement packet parsing logic", status: "done", priority: "high", assignedTo: s4._id, projectId: p4._id },
+            { title: "Real-time traffic d3.js visualization", status: "done", priority: "high", assignedTo: s1._id, projectId: p4._id },
+            { title: "Threat alert notification system", status: "in-progress", priority: "medium", assignedTo: s5._id, projectId: p4._id },
+            { title: "Vulnerability scan scheduler", status: "todo", priority: "low", assignedTo: s4._id, projectId: p4._id },
         ];
 
-        for (const t of p1Tasks) await TaskModel.create({ ...t, projectId: p1._id });
-        for (const t of p2Tasks) await TaskModel.create({ ...t, projectId: p2._id });
-        for (const t of p3Tasks) await TaskModel.create({ ...t, projectId: p3._id });
+        for (const t of tasks) {
+            await TaskModel.create(t);
+        }
 
-        return NextResponse.json({ ok: true, inserted: 3, message: "Database seeded successfully!" });
+        return NextResponse.json({
+            ok: true,
+            message: "Database seeded with rich demo data!",
+            stats: { users: 7, projects: 4, tasks: tasks.length }
+        });
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : String(err);
         return NextResponse.json({ error: errorMessage }, { status: 500 });
