@@ -44,18 +44,37 @@ export async function GET(
     }
 }
 
-// POST /api/projects/:id/tasks
 export async function POST(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
+    const { getSession } = await import("@/lib/auth");
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = session.user.id || session.user._id;
+
     const body = await req.json();
     let mongoError = null;
     try {
         if (USE_MONGO) {
             const { connectDB, TaskModel } = await getMongoHandler();
+            const { ProjectModel } = await import("@/models/Project");
             await connectDB();
+
+            // Permission Check: User must be Admin or Lead of this project
+            const project = await ProjectModel.findById(id).lean();
+            if (!project) return NextResponse.json({ error: "Project not found" }, { status: 404 });
+
+            const isAllowed = project.members?.some((m: any) =>
+                (m.userId === userId || m._id?.toString() === userId) &&
+                (m.role === "Admin" || m.userId === project.leaderId)
+            );
+
+            if (!isAllowed && project.ownerId !== userId) {
+                return NextResponse.json({ error: "Only Admins/Leaders can assign tasks" }, { status: 403 });
+            }
+
             const task = await TaskModel.create({
                 projectId: id,
                 title: body.title,

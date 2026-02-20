@@ -6,7 +6,7 @@ import TaskCard from "@/components/projects/TaskCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Crown, Settings } from "lucide-react";
 import Link from "next/link";
 
 const statusColors: Record<string, string> = {
@@ -88,17 +88,26 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                             <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
                                 {project.category}
                             </span>
+                            {project.leaderId && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 rounded-full">
+                                    <Crown className="w-3 h-3" />
+                                    Lead Assigned
+                                </span>
+                            )}
                         </div>
                         <p className="text-sm text-gray-500 max-w-2xl leading-relaxed">{project.description}</p>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                        <Link href={`/projects/${id}/team`}>
-                            <Button variant="outline" size="sm" className="gap-1.5">
-                                <UserPlus className="w-3.5 h-3.5" />
-                                Invite
-                            </Button>
-                        </Link>
-                    </div>
+                    {/* Conditionally show Invite button for Admin/Owner */}
+                    {(project.ownerId === project.userId || project.members?.some((m: any) => m.userId === project.userId && m.role === "Admin")) && (
+                        <div className="flex items-center gap-2 shrink-0">
+                            <Link href={`/projects/${id}/team`}>
+                                <Button variant="outline" size="sm" className="gap-1.5">
+                                    <UserPlus className="w-3.5 h-3.5" />
+                                    Manage Team
+                                </Button>
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* Progress + meta */}
@@ -235,7 +244,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                                         <span className="text-xs font-semibold text-indigo-700">{member.initials}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-900">{member.name}</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-sm font-medium text-gray-900">{member.name}</p>
+                                            {project.leaderId === member.userId && (
+                                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded-md border border-amber-200">
+                                                    <Crown className="w-2.5 h-2.5" />
+                                                    LEADER
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-xs text-gray-500">{member.email}</p>
                                     </div>
                                     <span className={`px-2.5 py-0.5 text-xs font-medium border rounded-full ${roleColors[member.role] ?? "bg-gray-50 text-gray-600 border-gray-200"}`}>

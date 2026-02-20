@@ -14,7 +14,8 @@ const ProjectSchema = new Schema<IProject>(
         teamSize: { type: Number, default: 1 },
         progress: { type: Number, default: 0, min: 0, max: 100 },
         category: { type: String, default: "Web" },
-        ownerId: { type: String },
+        ownerId: { type: String, required: true },
+        leaderId: { type: String },
         members: [
             {
                 userId: { type: String },

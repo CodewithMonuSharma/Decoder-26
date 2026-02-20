@@ -60,6 +60,7 @@ export interface Project {
     createdAt?: string;
     updatedAt?: string;
     ownerId?: string;
+    leaderId?: string;
     category: string;
 }
 
