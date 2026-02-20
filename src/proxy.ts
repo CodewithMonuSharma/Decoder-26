@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/auth";
 
 // 1. Specify protected and public routes
-const protectedRoutes = ["/dashboard", "/projects"];
+const protectedRoutes = ["/dashboard", "/projects", "/tasks", "/team", "/settings"];
 const publicRoutes = ["/auth/login", "/auth/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
     // 2. Check if the current route is protected or public
     const path = req.nextUrl.pathname;
-    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
-    const isPublicRoute = publicRoutes.some(route => path.startsWith(route));
+    const isProtectedRoute = protectedRoutes.some(route => path === route || path.startsWith(route + "/"));
+    const isPublicRoute = publicRoutes.some(route => path === route) || path.startsWith("/auth/");
 
     // 3. Decrypt the session from the cookie
     const cookie = req.cookies.get("session")?.value;

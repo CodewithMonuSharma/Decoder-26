@@ -55,6 +55,11 @@ export async function GET() {
 
 // POST /api/projects
 export async function POST(req: Request) {
+    const { getSession } = await import("@/lib/auth");
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { user } = session;
+
     const body = await req.json();
     let mongoError = null;
 
@@ -70,6 +75,7 @@ export async function POST(req: Request) {
                 teamSize: body.teamSize || 1,
                 progress: 0,
                 category: body.category || "Web",
+                ownerId: user.id || user._id,
                 members: body.members || [],
             });
             return NextResponse.json({ ...project.toObject(), id: project._id.toString(), tasks: [] }, { status: 201 });
