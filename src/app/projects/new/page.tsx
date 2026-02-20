@@ -46,9 +46,23 @@ export default function NewProjectPage() {
     const removeTech = (t: string) => setTechStack(techStack.filter((x) => x !== t));
 
     const onSubmit = async (data: FormData) => {
-        await new Promise((r) => setTimeout(r, 800));
-        router.push("/projects");
+        const res = await fetch("/api/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: data.name,
+                description: data.description,
+                category: data.category,
+                teamSize: parseInt(data.teamSize) || 1,
+                techStack,
+            }),
+        });
+        if (res.ok) {
+            const project = await res.json();
+            router.push(`/projects/${project.id || project._id}`);
+        }
     };
+
 
     return (
         <DashboardLayout title="New Project">

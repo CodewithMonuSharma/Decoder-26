@@ -1,0 +1,323 @@
+{
+  "projects": [
+    {
+      "id": "p1",
+      "name": "AI Research Portal",
+      "description": "A machine learning platform for collaborative research with real-time data analysis and visualization.",
+      "techStack": [
+        "Python",
+        "TensorFlow",
+        "Next.js",
+        "FastAPI"
+      ],
+      "status": "active",
+      "teamSize": 4,
+      "progress": 65,
+      "category": "AI / ML",
+      "members": [
+        {
+          "id": "m1",
+          "name": "Arjun Sharma",
+          "email": "arjun@demo.com",
+          "role": "Lead",
+          "initials": "AS",
+          "tasksAssigned": 3,
+          "joinedDate": "Jan 10",
+          "status": "active"
+        },
+        {
+          "id": "m2",
+          "name": "Priya Patel",
+          "email": "priya@demo.com",
+          "role": "Developer",
+          "initials": "PP",
+          "tasksAssigned": 2,
+          "joinedDate": "Jan 12",
+          "status": "active"
+        },
+        {
+          "id": "m3",
+          "name": "Rohan Verma",
+          "email": "rohan@demo.com",
+          "role": "Designer",
+          "initials": "RV",
+          "tasksAssigned": 1,
+          "joinedDate": "Jan 15",
+          "status": "away"
+        },
+        {
+          "id": "m4",
+          "name": "Sneha Gupta",
+          "email": "sneha@demo.com",
+          "role": "Tester",
+          "initials": "SG",
+          "tasksAssigned": 2,
+          "joinedDate": "Jan 18",
+          "status": "active"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "t1",
+          "projectId": "p1",
+          "title": "Set up ML pipeline",
+          "status": "done",
+          "priority": "high",
+          "assigneeName": "Arjun Sharma",
+          "assigneeInitials": "AS",
+          "dueDate": "Jan 20"
+        },
+        {
+          "id": "t2",
+          "projectId": "p1",
+          "title": "Build data visualization dashboard",
+          "status": "in-progress",
+          "priority": "high",
+          "assigneeName": "Priya Patel",
+          "assigneeInitials": "PP",
+          "dueDate": "Feb 5"
+        },
+        {
+          "id": "t3",
+          "projectId": "p1",
+          "title": "Integrate TensorFlow model",
+          "status": "in-progress",
+          "priority": "medium",
+          "assigneeName": "Arjun Sharma",
+          "assigneeInitials": "AS",
+          "dueDate": "Feb 10"
+        },
+        {
+          "id": "t4",
+          "projectId": "p1",
+          "title": "UI for model results",
+          "status": "todo",
+          "priority": "medium",
+          "assigneeName": "Rohan Verma",
+          "assigneeInitials": "RV",
+          "dueDate": "Feb 15"
+        },
+        {
+          "id": "t5",
+          "projectId": "p1",
+          "title": "Write API documentation",
+          "status": "todo",
+          "priority": "low",
+          "assigneeName": "Sneha Gupta",
+          "assigneeInitials": "SG",
+          "dueDate": "Feb 20"
+        }
+      ],
+      "createdAt": "2026-01-10"
+    },
+    {
+      "id": "p2",
+      "name": "EcoTrack Mobile App",
+      "description": "Sustainability tracking application allowing users to monitor their carbon footprint and eco-friendly habits.",
+      "techStack": [
+        "React Native",
+        "Node.js",
+        "MongoDB",
+        "Firebase"
+      ],
+      "status": "active",
+      "teamSize": 3,
+      "progress": 42,
+      "category": "Mobile",
+      "members": [
+        {
+          "id": "m5",
+          "name": "Karan Singh",
+          "email": "karan@demo.com",
+          "role": "Lead",
+          "initials": "KS",
+          "tasksAssigned": 3,
+          "joinedDate": "Dec 5",
+          "status": "active"
+        },
+        {
+          "id": "m2",
+          "name": "Priya Patel",
+          "email": "priya@demo.com",
+          "role": "Developer",
+          "initials": "PP",
+          "tasksAssigned": 4,
+          "joinedDate": "Dec 8",
+          "status": "active"
+        },
+        {
+          "id": "m3",
+          "name": "Rohan Verma",
+          "email": "rohan@demo.com",
+          "role": "Designer",
+          "initials": "RV",
+          "tasksAssigned": 2,
+          "joinedDate": "Dec 10",
+          "status": "active"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "t6",
+          "projectId": "p2",
+          "title": "Design onboarding screen",
+          "status": "done",
+          "priority": "high",
+          "assigneeName": "Rohan Verma",
+          "assigneeInitials": "RV",
+          "dueDate": "Dec 15"
+        },
+        {
+          "id": "t7",
+          "projectId": "p2",
+          "title": "Carbon calculator logic",
+          "status": "in-progress",
+          "priority": "high",
+          "assigneeName": "Karan Singh",
+          "assigneeInitials": "KS",
+          "dueDate": "Jan 10"
+        },
+        {
+          "id": "t8",
+          "projectId": "p2",
+          "title": "Push notification setup",
+          "status": "todo",
+          "priority": "medium",
+          "assigneeName": "Priya Patel",
+          "assigneeInitials": "PP",
+          "dueDate": "Jan 20"
+        },
+        {
+          "id": "t9",
+          "projectId": "p2",
+          "title": "Firebase auth integration",
+          "status": "done",
+          "priority": "high",
+          "assigneeName": "Priya Patel",
+          "assigneeInitials": "PP",
+          "dueDate": "Dec 20"
+        }
+      ],
+      "createdAt": "2025-12-05"
+    },
+    {
+      "id": "p3",
+      "name": "Campus Event Hub",
+      "description": "Centralized platform for discovering, organizing, and managing university events and student activities.",
+      "techStack": [
+        "Next.js",
+        "PostgreSQL",
+        "Tailwind CSS",
+        "Prisma"
+      ],
+      "status": "active",
+      "teamSize": 3,
+      "progress": 80,
+      "category": "Web",
+      "members": [
+        {
+          "id": "m1",
+          "name": "Arjun Sharma",
+          "email": "arjun@demo.com",
+          "role": "Developer",
+          "initials": "AS",
+          "tasksAssigned": 2,
+          "joinedDate": "Nov 20",
+          "status": "active"
+        },
+        {
+          "id": "m4",
+          "name": "Sneha Gupta",
+          "email": "sneha@demo.com",
+          "role": "Lead",
+          "initials": "SG",
+          "tasksAssigned": 3,
+          "joinedDate": "Nov 20",
+          "status": "active"
+        },
+        {
+          "id": "m5",
+          "name": "Karan Singh",
+          "email": "karan@demo.com",
+          "role": "Designer",
+          "initials": "KS",
+          "tasksAssigned": 1,
+          "joinedDate": "Nov 22",
+          "status": "away"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "t10",
+          "projectId": "p3",
+          "title": "Event creation form",
+          "status": "done",
+          "priority": "high",
+          "assigneeName": "Sneha Gupta",
+          "assigneeInitials": "SG",
+          "dueDate": "Nov 30"
+        },
+        {
+          "id": "t11",
+          "projectId": "p3",
+          "title": "RSVP feature",
+          "status": "done",
+          "priority": "medium",
+          "assigneeName": "Arjun Sharma",
+          "assigneeInitials": "AS",
+          "dueDate": "Dec 5"
+        },
+        {
+          "id": "t12",
+          "projectId": "p3",
+          "title": "Email notification system",
+          "status": "in-progress",
+          "priority": "high",
+          "assigneeName": "Sneha Gupta",
+          "assigneeInitials": "SG",
+          "dueDate": "Dec 20"
+        },
+        {
+          "id": "t13",
+          "projectId": "p3",
+          "title": "Calendar view",
+          "status": "todo",
+          "priority": "medium",
+          "assigneeName": "Karan Singh",
+          "assigneeInitials": "KS",
+          "dueDate": "Jan 10"
+        }
+      ],
+      "createdAt": "2025-11-20"
+    },
+    {
+      "id": "mu35zlb4",
+      "name": "Verified Project",
+      "description": "This is a verified description",
+      "techStack": [
+        "Next.js",
+        "Resilience"
+      ],
+      "status": "active",
+      "teamSize": 5,
+      "progress": 0,
+      "category": "AI / ML",
+      "members": [],
+      "tasks": [],
+      "createdAt": "2026-02-20"
+    },
+    {
+      "id": "slun0e3t",
+      "name": "Arjun Project ",
+      "description": "\nrttqtyyqy gbcicqcmanamnmqysiauxkmngdisahjkxz,",
+      "techStack": [],
+      "status": "active",
+      "teamSize": 5,
+      "progress": 0,
+      "category": "Data Science",
+      "members": [],
+      "tasks": [],
+      "createdAt": "2026-02-20"
+    }
+  ]
+}

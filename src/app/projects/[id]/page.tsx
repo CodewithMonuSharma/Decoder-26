@@ -1,14 +1,12 @@
 "use client";
 
-import { notFound } from "next/navigation";
-import { projects, members } from "@/lib/data";
+import { useEffect, useState, use } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import TaskCard from "@/components/projects/TaskCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { UserPlus, ExternalLink, Calendar, LayoutGrid } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import Link from "next/link";
 
 const statusColors: Record<string, string> = {
@@ -26,21 +24,54 @@ const roleColors: Record<string, string> = {
     Manager: "bg-purple-50 text-purple-700 border-purple-200",
 };
 
-export default function ProjectDetailPage({ params }: { params: { id: string } }) {
-    const project = projects.find((p) => p.id === params.id);
-    if (!project) notFound();
+export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
+    const [project, setProject] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-    const todoTasks = project.tasks.filter((t) => t.status === "todo");
-    const inProgressTasks = project.tasks.filter((t) => t.status === "in-progress");
-    const doneTasks = project.tasks.filter((t) => t.status === "done");
+    useEffect(() => {
+        if (!id) return;
+        fetch(`/api/projects/${id}`)
+            .then((r) => r.json())
+            .then((data) => {
+                setProject(data.error ? null : data);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [id]);
 
-    const getMember = (id: string) => members.find((m) => m.id === id);
+    if (loading) {
+        return (
+            <DashboardLayout>
+                <div className="space-y-4 animate-pulse">
+                    <div className="h-8 w-64 bg-gray-200 rounded-lg" />
+                    <div className="h-4 w-96 bg-gray-100 rounded" />
+                    <div className="h-24 bg-gray-100 rounded-xl" />
+                </div>
+            </DashboardLayout>
+        );
+    }
+
+    if (!project) {
+        return (
+            <DashboardLayout>
+                <div className="text-center py-20 text-gray-400">
+                    Project not found.{" "}
+                    <Link href="/projects" className="text-teal-600 hover:underline">Go back</Link>
+                </div>
+            </DashboardLayout>
+        );
+    }
+
+    const tasks: any[] = project.tasks ?? [];
+    const todoTasks = tasks.filter((t) => t.status === "todo");
+    const inProgressTasks = tasks.filter((t) => t.status === "in-progress");
+    const doneTasks = tasks.filter((t) => t.status === "done");
 
     return (
         <DashboardLayout>
             {/* Project Header */}
             <div className="mb-6">
-                {/* Breadcrumb */}
                 <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-3">
                     <Link href="/projects" className="hover:text-primary">Projects</Link>
                     <span>/</span>
@@ -51,8 +82,8 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[project.status]}`}>
-                                {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[project.status] ?? ""}`}>
+                                {project.status?.charAt(0).toUpperCase() + project.status?.slice(1)}
                             </span>
                             <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
                                 {project.category}
@@ -61,7 +92,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                         <p className="text-sm text-gray-500 max-w-2xl leading-relaxed">{project.description}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <Link href={`/projects/${project.id}/team`}>
+                        <Link href={`/projects/${id}/team`}>
                             <Button variant="outline" size="sm" className="gap-1.5">
                                 <UserPlus className="w-3.5 h-3.5" />
                                 Invite
@@ -84,8 +115,8 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                             <p className="text-xs text-gray-400 mb-1">Team</p>
                             <div className="flex items-center gap-1.5">
                                 <div className="flex -space-x-1.5">
-                                    {project.members.slice(0, 4).map((m) => (
-                                        <div key={m.id} className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center">
+                                    {(project.members ?? []).slice(0, 4).map((m: any, i: number) => (
+                                        <div key={i} className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center">
                                             <span className="text-[9px] font-semibold text-indigo-700">{m.initials}</span>
                                         </div>
                                     ))}
@@ -95,13 +126,11 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                         </div>
                         <div>
                             <p className="text-xs text-gray-400 mb-1">Tasks Done</p>
-                            <p className="text-sm font-semibold text-gray-800">
-                                {doneTasks.length}/{project.tasks.length}
-                            </p>
+                            <p className="text-sm font-semibold text-gray-800">{doneTasks.length}/{tasks.length}</p>
                         </div>
                         <div>
-                            <p className="text-xs text-gray-400 mb-1">Created</p>
-                            <p className="text-sm font-semibold text-gray-800">{project.createdAt}</p>
+                            <p className="text-xs text-gray-400 mb-1">Category</p>
+                            <p className="text-sm font-semibold text-gray-800">{project.category ?? "—"}</p>
                         </div>
                     </div>
                 </div>
@@ -114,14 +143,14 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                         Overview
                     </TabsTrigger>
                     <TabsTrigger value="tasks" className="text-xs px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all">
-                        Tasks ({project.tasks.length})
+                        Tasks ({tasks.length})
                     </TabsTrigger>
                     <TabsTrigger value="team" className="text-xs px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all">
                         Team ({project.teamSize})
                     </TabsTrigger>
                 </TabsList>
 
-                {/* Overview Tab */}
+                {/* Overview */}
                 <TabsContent value="overview">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="bg-white border border-border rounded-xl p-5">
@@ -131,10 +160,8 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                         <div className="bg-white border border-border rounded-xl p-5">
                             <h3 className="text-sm font-semibold text-gray-900 mb-3">Tech Stack</h3>
                             <div className="flex flex-wrap gap-2">
-                                {project.techStack.map((tech) => (
-                                    <span key={tech} className="px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-lg border border-primary/20">
-                                        {tech}
-                                    </span>
+                                {(project.techStack ?? []).map((tech: string) => (
+                                    <span key={tech} className="px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-lg border border-primary/20">{tech}</span>
                                 ))}
                             </div>
                         </div>
@@ -156,7 +183,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                     </div>
                 </TabsContent>
 
-                {/* Tasks Kanban Tab */}
+                {/* Tasks Kanban */}
                 <TabsContent value="tasks">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {[
@@ -175,8 +202,8 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                                     </span>
                                 </div>
                                 <div className="space-y-2.5">
-                                    {col.tasks.map((task) => (
-                                        <TaskCard key={task.id} task={task} assignee={getMember(task.assigneeId)} />
+                                    {col.tasks.map((task: any) => (
+                                        <TaskCard key={task.id || task._id} task={{ ...task, id: task.id || task._id }} />
                                     ))}
                                     {col.tasks.length === 0 && (
                                         <div className="h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center">
@@ -189,12 +216,12 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                     </div>
                 </TabsContent>
 
-                {/* Team Tab */}
+                {/* Team */}
                 <TabsContent value="team">
                     <div className="bg-white border border-border rounded-xl overflow-hidden">
                         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
                             <h3 className="text-sm font-semibold text-gray-900">{project.teamSize} Members</h3>
-                            <Link href={`/projects/${project.id}/team`}>
+                            <Link href={`/projects/${id}/team`}>
                                 <Button variant="outline" size="sm" className="gap-1.5 text-xs">
                                     <UserPlus className="w-3.5 h-3.5" />
                                     Invite Member
@@ -202,8 +229,8 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                             </Link>
                         </div>
                         <div className="divide-y divide-border">
-                            {project.members.map((member) => (
-                                <div key={member.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50 transition-colors">
+                            {(project.members ?? []).map((member: any, i: number) => (
+                                <div key={i} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50 transition-colors">
                                     <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
                                         <span className="text-xs font-semibold text-indigo-700">{member.initials}</span>
                                     </div>
@@ -211,14 +238,14 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                                         <p className="text-sm font-medium text-gray-900">{member.name}</p>
                                         <p className="text-xs text-gray-500">{member.email}</p>
                                     </div>
-                                    <span className={`px-2.5 py-0.5 text-xs font-medium border rounded-full ${roleColors[member.role]}`}>
+                                    <span className={`px-2.5 py-0.5 text-xs font-medium border rounded-full ${roleColors[member.role] ?? "bg-gray-50 text-gray-600 border-gray-200"}`}>
                                         {member.role}
                                     </span>
                                     <div className="text-right min-w-[64px]">
                                         <p className="text-xs font-semibold text-gray-800">{member.tasksAssigned}</p>
                                         <p className="text-[10px] text-gray-400">tasks</p>
                                     </div>
-                                    <div className={`w-2 h-2 rounded-full ${member.status === "active" ? "bg-emerald-500" : member.status === "away" ? "bg-amber-400" : "bg-gray-300"}`} title={member.status} />
+                                    <div className={`w-2 h-2 rounded-full ${member.status === "active" ? "bg-emerald-500" : member.status === "away" ? "bg-amber-400" : "bg-gray-300"}`} />
                                 </div>
                             ))}
                         </div>
