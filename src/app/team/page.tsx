@@ -5,11 +5,12 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Search, Plus, ExternalLink, FileText, Mail, Calendar,
-    Upload, PenLine, Link as LinkIcon, Download, Github
+    Upload, PenLine, Link as LinkIcon, Download, Github, MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ConnectRepoCard from "@/components/github/ConnectRepoCard";
 import CommitList from "@/components/github/CommitList";
+import { GroupChatContainer } from "@/components/chat/GroupChatContainer";
 
 // Stable teamId for this demo — in production this would come from the user's session
 const TEAM_ID = "demo";
@@ -105,6 +106,9 @@ export default function TeamPage() {
                     </TabsTrigger>
                     <TabsTrigger value="github" className="px-6 py-2 rounded-lg data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-all text-sm font-medium flex items-center gap-2">
                         <Github className="w-3.5 h-3.5" /> GitHub
+                    </TabsTrigger>
+                    <TabsTrigger value="chat" className="px-6 py-2 rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white transition-all text-sm font-medium flex items-center gap-2">
+                        <MessageSquare className="w-3.5 h-3.5" /> Group Chat
                     </TabsTrigger>
                 </TabsList>
 
@@ -318,6 +322,15 @@ export default function TeamPage() {
                         />
                         <CommitList teamId={TEAM_ID} refreshTrigger={commitRefresh} />
                     </div>
+                </TabsContent>
+
+                {/* ─── Group Chat Tab ──────────────────────────────── */}
+                <TabsContent value="chat">
+                    <GroupChatContainer
+                        teamId={TEAM_ID}
+                        memberCount={users.length || 5}
+                        currentUser={undefined}
+                    />
                 </TabsContent>
             </Tabs>
         </DashboardLayout>

@@ -6,8 +6,9 @@ import TaskCard from "@/components/projects/TaskCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { UserPlus, Crown, Settings } from "lucide-react";
+import { UserPlus, Crown, Settings, MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { GroupChatContainer } from "@/components/chat/GroupChatContainer";
 
 const statusColors: Record<string, string> = {
     active: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -157,6 +158,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     <TabsTrigger value="team" className="text-xs px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all">
                         Team ({project.teamSize})
                     </TabsTrigger>
+                    <TabsTrigger value="chat" className="text-xs px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-md transition-all flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        Group Chat
+                    </TabsTrigger>
                 </TabsList>
 
                 {/* Overview */}
@@ -266,6 +271,16 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                                 </div>
                             ))}
                         </div>
+                    </div>
+                </TabsContent>
+
+                {/* Group Chat */}
+                <TabsContent value="chat">
+                    <div className="max-w-4xl mx-auto">
+                        <GroupChatContainer
+                            teamId={id}
+                            memberCount={project.teamSize}
+                        />
                     </div>
                 </TabsContent>
             </Tabs>
