@@ -16,7 +16,10 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-    const doneTasks = project.tasks.filter((t) => t.status === "done").length;
+    const tasks = project.tasks ?? [];
+    const techStack = project.techStack ?? [];
+    const members = project.members ?? [];
+    const doneTasks = tasks.filter((t) => t.status === "done").length;
 
     return (
         <Link href={`/projects/${project.id}`} className="block">
@@ -44,7 +47,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
                 {/* Tech Stack */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                    {project.techStack.slice(0, 4).map((tech, idx) => (
+                    {techStack.slice(0, 4).map((tech, idx) => (
                         <span
                             key={`${tech}-${idx}`}
                             className="px-2 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-600 rounded-md"
@@ -52,9 +55,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                             {tech}
                         </span>
                     ))}
-                    {project.techStack.length > 4 && (
+                    {techStack.length > 4 && (
                         <span className="px-2 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-500 rounded-md">
-                            +{project.techStack.length - 4}
+                            +{techStack.length - 4}
                         </span>
                     )}
                 </div>
@@ -76,11 +79,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                     </div>
                     <div className="flex items-center gap-1.5 text-gray-500">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                        <span className="text-xs">{doneTasks}/{project.tasks.length} tasks</span>
+                        <span className="text-xs">{doneTasks}/{tasks.length} tasks</span>
                     </div>
                     {/* Member avatars */}
                     <div className="flex -space-x-1.5">
-                        {project.members.slice(0, 4).map((member, idx) => (
+                        {members.slice(0, 4).map((member, idx) => (
                             <div
                                 key={member.userId || member.id || idx}
                                 className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center"

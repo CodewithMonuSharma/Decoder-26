@@ -3,13 +3,14 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import ProjectCard from "@/components/projects/ProjectCard";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import { activityFeed } from "@/lib/data";
-import { FolderKanban, CheckCircle2, Users, TrendingUp } from "lucide-react";
+
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardStatsSection } from "@/components/dashboard/DashboardStatsSection";
 import { ProjectList } from "@/components/dashboard/ProjectList";
 import MentorStudentList from "@/components/dashboard/MentorStudentList";
 import MentorProjectRequests from "@/components/dashboard/MentorProjectRequests";
+import GitHubImpactCard from "@/components/github/GitHubImpactCard";
 
 export default async function DashboardPage() {
     const session = await getSession();
@@ -57,6 +58,11 @@ export default async function DashboardPage() {
                         <ActivityFeed events={activityFeed} />
                     </div>
                 </div>
+            </div>
+
+            {/* GitHub Impact Card */}
+            <div className="mt-6">
+                <GitHubImpactCard teamId="demo" />
             </div>
         </DashboardLayout>
     );

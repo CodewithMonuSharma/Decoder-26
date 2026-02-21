@@ -6,6 +6,7 @@ import ImpactScoreCard from "@/components/analytics/ImpactScoreCard";
 import ConsistencyLineChart from "@/components/analytics/ConsistencyLineChart";
 import ContributionHeatmap from "@/components/analytics/ContributionHeatmap";
 import ProductivityPieChart from "@/components/analytics/ProductivityPieChart";
+import CommitImpactAnalytics from "@/components/analytics/CommitImpactAnalytics";
 import { BarChart2, TrendingUp, GitCommitHorizontal, Activity } from "lucide-react";
 
 const summaryStats = [
@@ -100,8 +101,13 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Row 3 – Contribution Heatmap (full width) */}
-            <div className="mb-2">
+            <div className="mb-5">
                 <ContributionHeatmap />
+            </div>
+
+            {/* Row 4 – GitHub Commit Impact Analytics (full width) */}
+            <div className="mb-2">
+                <CommitImpactAnalytics teamId="demo" />
             </div>
         </DashboardLayout>
     );

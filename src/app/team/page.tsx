@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Search, Plus, ExternalLink, FileText, Mail, Calendar,
-    Upload, PenLine, Link as LinkIcon, Download
+    Upload, PenLine, Link as LinkIcon, Download, Github
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ConnectRepoCard from "@/components/github/ConnectRepoCard";
+import CommitList from "@/components/github/CommitList";
+
+// Stable teamId for this demo — in production this would come from the user's session
+const TEAM_ID = "demo";
 
 export default function TeamPage() {
     const [users, setUsers] = useState<any[]>([]);
@@ -17,6 +22,16 @@ export default function TeamPage() {
     const [newDoc, setNewDoc] = useState({ title: "", url: "", content: "", type: "link" });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [addingDoc, setAddingDoc] = useState(false);
+    const [connectedRepo, setConnectedRepo] = useState<any>(null);
+    const [commitRefresh, setCommitRefresh] = useState(0);
+
+    const loadRepo = useCallback(async () => {
+        try {
+            const res = await fetch(`/api/github/repo?teamId=${TEAM_ID}`);
+            const data = await res.json();
+            setConnectedRepo(data.repo || null);
+        } catch { /* silent */ }
+    }, []);
 
     useEffect(() => {
         Promise.all([
@@ -27,7 +42,8 @@ export default function TeamPage() {
             setResources(Array.isArray(resourceData) ? resourceData : []);
             setLoading(false);
         }).catch(() => setLoading(false));
-    }, []);
+        loadRepo();
+    }, [loadRepo]);
 
     const handleAddResource = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,6 +102,9 @@ export default function TeamPage() {
                     </TabsTrigger>
                     <TabsTrigger value="docs" className="px-6 py-2 rounded-lg data-[state=active]:bg-teal-600 data-[state=active]:text-white transition-all text-sm font-medium">
                         Documentation
+                    </TabsTrigger>
+                    <TabsTrigger value="github" className="px-6 py-2 rounded-lg data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-all text-sm font-medium flex items-center gap-2">
+                        <Github className="w-3.5 h-3.5" /> GitHub
                     </TabsTrigger>
                 </TabsList>
 
@@ -286,6 +305,18 @@ export default function TeamPage() {
                                 </div>
                             ))
                         )}
+                    </div>
+                </TabsContent>
+
+                {/* ─── GitHub Tab ─────────────────────────────────── */}
+                <TabsContent value="github">
+                    <div className="space-y-6">
+                        <ConnectRepoCard
+                            teamId={TEAM_ID}
+                            initialRepo={connectedRepo}
+                            onSynced={() => setCommitRefresh((n) => n + 1)}
+                        />
+                        <CommitList teamId={TEAM_ID} refreshTrigger={commitRefresh} />
                     </div>
                 </TabsContent>
             </Tabs>

@@ -47,8 +47,12 @@ interface DB {
 
 // ── Helpers ───────────────────────────────────────
 function readDB(): DB {
-    const raw = fs.readFileSync(DB_PATH, "utf-8");
-    return JSON.parse(raw);
+    try {
+        const raw = fs.readFileSync(DB_PATH, "utf-8");
+        return JSON.parse(raw);
+    } catch {
+        return { projects: [] };
+    }
 }
 
 function writeDB(db: DB): void {

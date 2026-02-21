@@ -3,7 +3,7 @@ import { Task as ITask } from "@/types";
 
 const TaskSchema = new Schema<ITask>(
     {
-        projectId: { type: Schema.Types.ObjectId, ref: "Project", required: true },
+        projectId: { type: String, ref: "Project", required: true },
         title: { type: String, required: true },
         description: { type: String, default: "" },
         status: {

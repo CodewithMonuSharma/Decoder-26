@@ -1,0 +1,234 @@
+// ─── Seed Demo Commits ─────────────────────────────────────────────────────
+// Run via: npx tsx src/scripts/seedCommits.ts
+// Seeds 12 realistic dummy commits for teamId="demo" so the demo looks active.
+
+import mongoose from "mongoose";
+import * as dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+
+const MONGODB_URI = process.env.MONGODB_URI || "";
+if (!MONGODB_URI) throw new Error("MONGODB_URI not set");
+
+const CommitSchema = new mongoose.Schema({
+    commitId: String,
+    teamId: String,
+    author: String,
+    authorAvatar: String,
+    message: String,
+    filesChanged: Number,
+    additions: Number,
+    deletions: Number,
+    timestamp: Date,
+    url: String,
+    impactScore: Number,
+    impactLevel: String,
+    impactInsight: String,
+}, { timestamps: true });
+
+const demoCommits = [
+    {
+        commitId: "abc001demo",
+        teamId: "demo",
+        author: "Rahul Sharma",
+        authorAvatar: "",
+        message: "feat: implement core authentication with JWT",
+        filesChanged: 8,
+        additions: 320,
+        deletions: 45,
+        timestamp: new Date("2026-02-20T10:30:00Z"),
+        url: "#",
+        impactScore: 92,
+        impactLevel: "High",
+        impactInsight: "High-impact commit. Added core authentication logic affecting system functionality.",
+    },
+    {
+        commitId: "abc002demo",
+        teamId: "demo",
+        author: "Priya Menon",
+        authorAvatar: "",
+        message: "feat: add real-time team collaboration dashboard",
+        filesChanged: 12,
+        additions: 480,
+        deletions: 30,
+        timestamp: new Date("2026-02-19T14:20:00Z"),
+        url: "#",
+        impactScore: 88,
+        impactLevel: "High",
+        impactInsight: "Critical commit — major feature addition with substantial lines changed.",
+    },
+    {
+        commitId: "abc003demo",
+        teamId: "demo",
+        author: "Ankit Verma",
+        authorAvatar: "",
+        message: "fix: resolve API rate limit issue in GitHub service",
+        filesChanged: 3,
+        additions: 85,
+        deletions: 22,
+        timestamp: new Date("2026-02-18T09:15:00Z"),
+        url: "#",
+        impactScore: 61,
+        impactLevel: "Medium",
+        impactInsight: "Medium-impact commit. Addresses a bug or feature enhancement with moderate code changes.",
+    },
+    {
+        commitId: "abc004demo",
+        teamId: "demo",
+        author: "Sneha Patil",
+        authorAvatar: "",
+        message: "refactor: optimize database queries for performance",
+        filesChanged: 6,
+        additions: 140,
+        deletions: 180,
+        timestamp: new Date("2026-02-17T16:45:00Z"),
+        url: "#",
+        impactScore: 75,
+        impactLevel: "High",
+        impactInsight: "High-impact: Database performance refactor affecting system-wide query efficiency.",
+    },
+    {
+        commitId: "abc005demo",
+        teamId: "demo",
+        author: "Rahul Sharma",
+        authorAvatar: "",
+        message: "feat: integrate payment gateway API",
+        filesChanged: 9,
+        additions: 260,
+        deletions: 12,
+        timestamp: new Date("2026-02-16T11:00:00Z"),
+        url: "#",
+        impactScore: 85,
+        impactLevel: "High",
+        impactInsight: "High-impact release-quality commit with broad codebase coverage.",
+    },
+    {
+        commitId: "abc006demo",
+        teamId: "demo",
+        author: "Priya Menon",
+        authorAvatar: "",
+        message: "update: improve mobile responsive layout",
+        filesChanged: 4,
+        additions: 95,
+        deletions: 60,
+        timestamp: new Date("2026-02-15T13:30:00Z"),
+        url: "#",
+        impactScore: 44,
+        impactLevel: "Medium",
+        impactInsight: "Feature update or fix with measurable code impact. Good iterative progress.",
+    },
+    {
+        commitId: "abc007demo",
+        teamId: "demo",
+        author: "Ankit Verma",
+        authorAvatar: "",
+        message: "chore: update dependencies and remove unused imports",
+        filesChanged: 2,
+        additions: 15,
+        deletions: 38,
+        timestamp: new Date("2026-02-14T08:20:00Z"),
+        url: "#",
+        impactScore: 12,
+        impactLevel: "Low",
+        impactInsight: "Low-impact commit. Minor edits, documentation, or config changes.",
+    },
+    {
+        commitId: "abc008demo",
+        teamId: "demo",
+        author: "Sneha Patil",
+        authorAvatar: "",
+        message: "fix: correct data validation in user registration form",
+        filesChanged: 3,
+        additions: 48,
+        deletions: 25,
+        timestamp: new Date("2026-02-13T15:10:00Z"),
+        url: "#",
+        impactScore: 38,
+        impactLevel: "Medium",
+        impactInsight: "Solid improvement commit. Moderate scope changes across multiple files.",
+    },
+    {
+        commitId: "abc009demo",
+        teamId: "demo",
+        author: "Rahul Sharma",
+        authorAvatar: "",
+        message: "feat: add AI-powered commit impact analysis engine",
+        filesChanged: 15,
+        additions: 620,
+        deletions: 80,
+        timestamp: new Date("2026-02-12T17:00:00Z"),
+        url: "#",
+        impactScore: 97,
+        impactLevel: "High",
+        impactInsight: "Highest-impact commit detected. AI integration with comprehensive system coverage across 15 files.",
+    },
+    {
+        commitId: "abc010demo",
+        teamId: "demo",
+        author: "Priya Menon",
+        authorAvatar: "",
+        message: "docs: add comprehensive API documentation",
+        filesChanged: 5,
+        additions: 200,
+        deletions: 10,
+        timestamp: new Date("2026-02-11T10:45:00Z"),
+        url: "#",
+        impactScore: 22,
+        impactLevel: "Low",
+        impactInsight: "Configuration or style update. Minimal functional impact.",
+    },
+    {
+        commitId: "abc011demo",
+        teamId: "demo",
+        author: "Ankit Verma",
+        authorAvatar: "",
+        message: "feat: implement team notification system",
+        filesChanged: 7,
+        additions: 185,
+        deletions: 20,
+        timestamp: new Date("2026-02-10T14:30:00Z"),
+        url: "#",
+        impactScore: 70,
+        impactLevel: "High",
+        impactInsight: "Large-scope commit. Several files modified with notable additions — high engineering effort.",
+    },
+    {
+        commitId: "abc012demo",
+        teamId: "demo",
+        author: "Sneha Patil",
+        authorAvatar: "",
+        message: "fix: security patch for session token validation",
+        filesChanged: 2,
+        additions: 65,
+        deletions: 30,
+        timestamp: new Date("2026-02-09T09:00:00Z"),
+        url: "#",
+        impactScore: 78,
+        impactLevel: "High",
+        impactInsight: "Critical commit — security patch affecting auth layer with measurable code changes.",
+    },
+];
+
+async function seed() {
+    await mongoose.connect(MONGODB_URI);
+    console.log("Connected to MongoDB");
+
+    const CommitModel = mongoose.models.Commit || mongoose.model("Commit", CommitSchema);
+
+    for (const commit of demoCommits) {
+        await CommitModel.findOneAndUpdate(
+            { commitId: commit.commitId, teamId: commit.teamId },
+            commit,
+            { upsert: true }
+        );
+    }
+
+    console.log(`✅ Seeded ${demoCommits.length} demo commits`);
+    await mongoose.disconnect();
+}
+
+seed().catch((err) => {
+    console.error("Seed failed:", err);
+    process.exit(1);
+});
