@@ -12,6 +12,7 @@ import {
     ChevronRight,
     Boxes,
     LogOut,
+    GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ const navItems = [
     { label: "Tasks", href: "/tasks", icon: CheckSquare },
     { label: "Team", href: "/team", icon: Users },
     { label: "Analytics", href: "/analytics", icon: BarChart2 },
+    { label: "Transcript", href: "/student-transcript", icon: GraduationCap },
     { label: "Settings", href: "/settings", icon: Settings },
 ];
 
