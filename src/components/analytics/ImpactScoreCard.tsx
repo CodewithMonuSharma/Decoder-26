@@ -4,10 +4,18 @@ import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts";
 import { impactScore } from "./analyticsData";
 import { TrendingUp, TrendingDown, Zap } from "lucide-react";
 
-export default function ImpactScoreCard() {
-    const { score, previousScore, label } = impactScore;
-    const trend = score - previousScore;
-    const isUp = trend >= 0;
+interface ImpactScoreCardProps {
+    score?: number;
+    trend?: string;
+    description?: string;
+}
+
+export default function ImpactScoreCard({ score: manualScore, trend: manualTrend, description: manualDesc }: ImpactScoreCardProps) {
+    const { score: defaultScore, previousScore, label } = impactScore;
+    const score = manualScore ?? defaultScore;
+    const trendValue = manualScore !== undefined ? 0 : (score - previousScore);
+    const isUp = manualTrend ? manualTrend.startsWith("+") : trendValue >= 0;
+    const trendDisplay = manualTrend ?? `${isUp ? "+" : ""}${trendValue} pts from last period`;
 
     // Data shaped for RadialBar: background track + filled arc
     const data = [
@@ -28,7 +36,7 @@ export default function ImpactScoreCard() {
 
             <div className="flex flex-col items-center justify-center flex-1">
                 {/* Circular progress */}
-                <div className="relative w-44 h-44">
+                <div className="relative w-36 h-36">
                     {/* Background track */}
                     <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
                         <circle
@@ -49,21 +57,26 @@ export default function ImpactScoreCard() {
                     </svg>
                     {/* Center text */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-extrabold text-gray-900">{score}</span>
-                        <span className="text-xs text-gray-400 font-medium tracking-wide">/ 100</span>
+                        <span className="text-3xl font-extrabold text-gray-900">{score}</span>
+                        <span className="text-[10px] text-gray-400 font-medium tracking-wide">/ 100</span>
                     </div>
                 </div>
 
-                {/* Trend badge */}
                 <div
                     className={`mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${isUp
-                            ? "bg-emerald-50 text-emerald-600"
-                            : "bg-red-50 text-red-500"
+                        ? "bg-emerald-50 text-emerald-600"
+                        : "bg-red-50 text-red-500"
                         }`}
                 >
                     {isUp ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                    {isUp ? "+" : ""}{trend} pts from last period
+                    {trendDisplay}
                 </div>
+
+                {manualDesc && (
+                    <p className="mt-4 text-xs text-gray-500 leading-relaxed text-center italic border-t border-gray-50 pt-4">
+                        {manualDesc}
+                    </p>
+                )}
             </div>
         </div>
     );

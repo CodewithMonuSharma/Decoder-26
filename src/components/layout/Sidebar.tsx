@@ -13,6 +13,8 @@ import {
     Boxes,
     LogOut,
     GraduationCap,
+    Trophy,
+    Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +25,9 @@ const navItems = [
     { label: "Team", href: "/team", icon: Users },
     { label: "Analytics", href: "/analytics", icon: BarChart2 },
     { label: "Transcript", href: "/student-transcript", icon: GraduationCap },
+    { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
+    { label: "University", href: "/university-dashboard", icon: GraduationCap },
+    { label: "Discover", href: "/discover", icon: Search },
     { label: "Settings", href: "/settings", icon: Settings },
 ];
 

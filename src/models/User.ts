@@ -10,6 +10,10 @@ const UserSchema = new Schema(
             enum: ["student", "mentor", "admin"],
             default: "student",
         },
+        initials: { type: String },
+        tagline: { type: String },
+        bio: { type: String },
+        skills: { type: [String], default: [] },
         mentorId: { type: String },
     },
     { timestamps: true }

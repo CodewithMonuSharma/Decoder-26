@@ -12,60 +12,60 @@ import {
 
 const features = [
   {
-    icon: Github,
-    title: "GitHub Integration",
+    icon: Users,
+    title: "Project Creation & Team Formation",
     description:
-      "Seamlessly connect your repositories and automatically track commits, pull requests, and code contributions in real-time.",
+      "Create cross-institution projects, invite teammates, and assign roles like leader, contributor, and reviewer.",
     iconBg: "bg-teal-50",
     iconColor: "text-teal-600",
   },
   {
-    icon: Zap,
-    title: "AI Impact Scoring",
+    icon: Github,
+    title: "Mentor Review & Feedback",
     description:
-      "Advanced AI analyzes commit messages and code changes to generate fair, objective impact scores for each team member.",
+      "Mentors can review submissions, provide feedback, approve milestones, and track team progress in real time.",
     iconBg: "bg-blue-50",
     iconColor: "text-blue-600",
   },
   {
-    icon: MessageSquare,
-    title: "Real-Time Chat",
+    icon: CheckSquare,
+    title: "Milestone & Progress Tracking",
     description:
-      "Collaborate instantly with your team through integrated chat, keeping all project discussions in one place.",
+      "Define project milestones and monitor completion status with structured progress tracking.",
     iconBg: "bg-purple-50",
     iconColor: "text-purple-600",
   },
   {
-    icon: BarChart3,
-    title: "Analytics Dashboard",
+    icon: Zap,
+    title: "Secure Document Sharing",
     description:
-      "Visualize team performance with comprehensive charts, graphs, and contribution breakdowns.",
+      "Upload research papers, designs, and reports in a centralized workspace accessible to students and mentors.",
     iconBg: "bg-pink-50",
     iconColor: "text-pink-600",
   },
   {
-    icon: CheckSquare,
-    title: "Task Management",
+    icon: BarChart3,
+    title: "Contribution Visibility Dashboard",
     description:
-      "Create, assign, and track tasks with an intuitive board interface that keeps everyone aligned.",
+      "Visualize commits, tasks, and individual contributions to ensure fair evaluation and transparent teamwork.",
     iconBg: "bg-red-50",
     iconColor: "text-red-500",
   },
   {
-    icon: Users,
-    title: "Team Collaboration",
+    icon: MessageSquare,
+    title: "Real-Time Collaboration",
     description:
-      "Invite members, assign roles, and manage permissions to create the perfect collaborative environment.",
+      "Integrated chat and notifications keep students and faculty aligned throughout the project lifecycle.",
     iconBg: "bg-orange-50",
     iconColor: "text-orange-500",
   },
 ];
 
 const stats = [
-  { value: "500+", label: "Active Projects", color: "text-teal-600" },
-  { value: "2,000+", label: "Students", color: "text-teal-600" },
-  { value: "50+", label: "Institutions", color: "text-teal-600" },
-  { value: "98%", label: "Satisfaction", color: "text-purple-600" },
+  { value: "1000+", label: "Student Collaborations", color: "text-teal-600" },
+  { value: "300+", label: "Projects Created", color: "text-teal-600" },
+  { value: "80+", label: "Mentors Connected", color: "text-teal-600" },
+  { value: "95%", label: "Improved Visibility", color: "text-purple-600" },
 ];
 
 export default function LandingPage() {
@@ -107,21 +107,18 @@ export default function LandingPage() {
         {/* Tag */}
         <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/70 border border-teal-200 text-teal-700 rounded-full text-xs font-semibold mb-7 backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
-          AI-Powered Contribution Intelligence
+          AI-Powered Cross-Institution Project Collaboration
         </div>
 
         {/* Headline */}
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.08] mb-5 max-w-3xl mx-auto">
-          Transform Student{" "}
-          <span className="text-teal-600">Collaboration</span>{" "}
-          Across Institutions
+        <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.08] mb-5 max-w-4xl mx-auto">
+          Collaborate, Track & Deliver Student Projects{" "}
+          <span className="text-teal-600">Across Institutions</span>
         </h1>
 
         {/* Subheading */}
-        <p className="text-base text-gray-500 max-w-xl mx-auto leading-relaxed mb-9">
-          A centralized platform where students collaborate on projects, integrate GitHub
-          repositories, track contributions, and generate AI-based impact scores for fair
-          evaluation.
+        <p className="text-base text-gray-500 max-w-2xl mx-auto leading-relaxed mb-9">
+          A unified platform enabling students and mentors from different institutions to collaborate on projects, track milestones, share documents, and ensure transparent contribution tracking for better academic outcomes.
         </p>
 
         {/* CTA Buttons */}
@@ -138,7 +135,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
           >
             <Play className="w-3.5 h-3.5 fill-gray-600 text-gray-600" />
-            Watch Demo
+            Explore Demo
           </Link>
         </div>
 
@@ -201,17 +198,16 @@ export default function LandingPage() {
             }}
           >
             <h2 className="text-3xl font-extrabold mb-3">
-              Ready to Transform Your Team?
+              Build Better Projects Together — Beyond Institutional Boundaries
             </h2>
-            <p className="text-teal-100 text-sm mb-8 max-w-md mx-auto leading-relaxed">
-              Join thousands of students already using CollabSpace to collaborate more
-              effectively and achieve better results.
+            <p className="text-teal-100 text-sm mb-8 max-w-xl mx-auto leading-relaxed">
+              Empower students and mentors with a collaborative workspace designed to improve coordination, transparency, and successful project delivery.
             </p>
             <Link
               href="/auth/signup"
               className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/30 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all backdrop-blur-sm"
             >
-              Get Started Free
+              Get Started Now
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
